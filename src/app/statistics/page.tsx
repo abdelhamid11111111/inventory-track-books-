@@ -1,12 +1,33 @@
-import React from 'react'
-import { SideBar } from '../sideBar/page'
+'use client'
+import React, { useEffect, useState } from 'react'
+import { SideBar } from '../components/SideBar'
 import { FaChartPie } from "react-icons/fa6";
 
 
-
-
+interface Book {
+  id?: number;
+  category: string;
+  quantity: number;
+  price: number;
+}
 
 const Statistics = () => {
+
+  const [books, setBooks] = useState<Book[]>([])
+
+  useEffect(() => {
+    const fetchedData = async () => {
+      const res = await fetch('/api/books')
+      const data = await res.json()
+      setBooks(data)
+    }
+    fetchedData()
+  }, [])
+
+  const totalCopies = books.reduce((acc, book) => acc + book.quantity, 0)
+
+  const totalValue = books.reduce((acc, book) => acc + book.quantity * book.price, 0)
+
   return (
         <div className="flex min-h-screen bg-gray-50 text-gray-800" style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}>
       {/* Sidebar */}
@@ -22,15 +43,15 @@ const Statistics = () => {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-gray-500 mb-2">Total unique books</h3>
-            <p className="text-3xl font-bold">120</p>
+            <p className="text-3xl font-bold">{books.length}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-gray-500 mb-2">Total copies</h3>
-            <p className="text-3xl font-bold">350</p>
+            <p className="text-3xl font-bold">{totalCopies}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-gray-500 mb-2">Total inventory value</h3>
-            <p className="text-3xl font-bold">$5,250</p>
+            <p className="text-3xl font-bold">{totalValue}$</p>
           </div>
         </section>
 
