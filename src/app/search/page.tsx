@@ -2,10 +2,8 @@
 import SearchComponent from '@/app/components/Search';
 import { SideBar } from '@/src/app/components/SideBar'
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { MdOutlineSearchOff } from "react-icons/md";
-
-
 
 interface Book {
   id?: number;
@@ -16,22 +14,17 @@ interface Book {
   category: string
 }
 
-
-const SearchPage = () => {
-
+// Create a separate component that uses useSearchParams
+const SearchContent = () => {
   const router = useRouter()
-
-  // State to hold search results
   const [books, setBooks] = useState<Book[]>([])
-
-  // Use Next.js router for navigation
   const searchParams = useSearchParams()
-  
   const [isLoading, setIsLoading] = useState(true)
 
   // EXTRACT QUERY PARAMETER FROM URL
   const query = searchParams.get('query') || ''
 
+  // FETCH RESULTS
   useEffect(() => {
     const fetchSearchResults = async () => {
       if(!query) return;
@@ -49,31 +42,26 @@ const SearchPage = () => {
   }, [query])
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-800" style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}>
-      {/* Sidebar */}
-      <SideBar />
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Search Header */}
-          <SearchComponent/>
-          {/* NOT FOUND CASE */}
-          {
-            books.length === 0 &&
-            <section>
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="bg-slate-100 p-6 rounded-full text-slate-500 mb-4">
-                  <MdOutlineSearchOff size={70}/>
-                </div>
-                <h2 className="text-2xl font-semibold text-slate-800 mb-2">No Books Found</h2>
-                <p className="text-slate-600">
-                  Your search did not match any books. Please try a different search term.
-                </p>
-              </div>
-            </section>
-          }
+    <>
+      {/* Search Header */}
+      <SearchComponent/>
 
-
+      {/* NOT FOUND CASE */}
+      {
+        !isLoading && books.length === 0 &&
+        <section>
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="bg-slate-100 p-6 rounded-full text-slate-500 mb-4">
+              <MdOutlineSearchOff size={70}/>
+            </div>
+            <h2 className="text-2xl font-semibold text-slate-800 mb-2">No Books Found</h2>
+            <p className="text-slate-600">
+              Your search did not match any books. Please try a different search term.
+            </p>
+          </div>
+        </section>
+      }
+      
       <section>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {isLoading ? (
@@ -131,12 +119,28 @@ const SearchPage = () => {
             ))
           )}
         </div>
-
       </section>
+    </>
+  )
+}
 
+const SearchPage = () => {
+  return (
+    <div className="flex min-h-screen bg-slate-50 text-slate-800" style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}>
+      {/* Sidebar */}
+      <SideBar />
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        <div className="max-w-7xl mx-auto">
+          <Suspense fallback={
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-slate-800"></div>
+            </div>
+          }>
+            <SearchContent />
+          </Suspense>
         </div>
       </main>
-
     </div>
   )
 }

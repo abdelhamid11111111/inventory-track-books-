@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { SideBar } from '../components/SideBar'
 import { FaChartPie } from "react-icons/fa6";
+import { ChartPieLegend } from '../components/chartPie';
 
 
 interface Book {
@@ -58,15 +59,7 @@ const Statistics = () => {
         {/* Category Distribution */}
         <section>
           <h2 className="text-2xl font-bold mb-4">Category Distribution</h2>
-          <div className="bg-white p-8 rounded-lg shadow-sm text-center border-2 border-dashed border-gray-200">
-            <div className="inline-flex items-center justify-center pb-5 h-24 w-24 rounded-full ">
-              <FaChartPie size={120}/>
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Pie Chart Placeholder</h3>
-            <p className="text-gray-500 max-w-md mx-auto">
-              This section will display a pie chart showing the distribution of books across different categories.
-            </p>
-          </div>
+            <ChartPieLegend/>
         </section>
       </main>
     </div>

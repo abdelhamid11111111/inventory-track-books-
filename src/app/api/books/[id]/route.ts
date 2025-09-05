@@ -1,45 +1,46 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 
-
-
-export async function DELETE(_:Request, { params }: {params: { id: string }}){
-    try{
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { id } = await params;
         await prisma.book.delete({
-            where: { id: Number(params.id)}
-        })
-        return NextResponse.json({status: 200})
-    } catch(error){
-        return NextResponse.json({error: 'server error from DELETE'}, {status: 500})
+            where: { id: Number(id) }
+        });
+        return NextResponse.json({ status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: 'server error from DELETE' }, { status: 500 });
     }
 }
 
-export async function GET(_:Request, { params }: {params: { id: string }}){
-    try{
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { id } = await params;
         const books = await prisma.book.findUnique({
-            where: { id: Number(params.id)}
-        })
+            where: { id: Number(id) }
+        });
         if (!books) {
             return NextResponse.json({ error: 'Book not found' }, { status: 404 });
         }
-        return NextResponse.json(books, {status: 200})
-    } catch(error){
+        return NextResponse.json(books, { status: 200 });
+    } catch (error) {
         console.error('server error', error);
-        return NextResponse.json({error:'server error form GET'}, {status: 500})
+        return NextResponse.json({ error: 'server error from GET' }, { status: 500 });
     }
 }
 
-export async function PUT(req:Request, { params }: {params: { id: string }}){
-    try{
-        const {book} = await req.json()
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { id } = await params;
+        const { book } = await req.json();
 
-        if(!book || !book.title?.trim() || !book.author?.trim() || !book.ISBN?.trim() || 
-           !book.category?.trim() || !book.quantity || !book.price || !book.image){
-            return NextResponse.json({error: 'Inputs are empty'}, {status: 400})
+        if (!book || !book.title?.trim() || !book.author?.trim() || !book.ISBN?.trim() || 
+           !book.category?.trim() || !book.quantity || !book.price || !book.image) {
+            return NextResponse.json({ error: 'Inputs are empty' }, { status: 400 });
         }
 
         const bookUpdated = await prisma.book.update({
-            where: { id: Number(params.id)},
+            where: { id: Number(id) },
             data: {
                 title: book.title.trim(),
                 author: book.author.trim(),
@@ -49,10 +50,10 @@ export async function PUT(req:Request, { params }: {params: { id: string }}){
                 price: Number(book.price),
                 image: book.image.trim()
             }
-        })
-        return NextResponse.json(bookUpdated, {status: 200})
-    } catch(error){
+        });
+        return NextResponse.json(bookUpdated, { status: 200 });
+    } catch (error) {
         console.error('server error', error);
-        return NextResponse.json({error:'server error form PUT'}, {status: 500})
+        return NextResponse.json({ error: 'server error from PUT' }, { status: 500 });
     }
 }

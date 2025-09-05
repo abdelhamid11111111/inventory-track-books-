@@ -24,7 +24,7 @@ const SearchFilterPage = () => {
   const [filteredBook, setFilteredBook] = useState<Book[]>([])
 
 
-  // FUNCTION FOR READ DATA
+  // FUNCTION FOR DISPLAY DATA
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -44,6 +44,7 @@ const SearchFilterPage = () => {
     fetchBooks();
   }, []);
 
+  // FUNCTION FOR FILTRING
   const handleFilter = async(genre: string) => {
     setActiveGenre(genre)
     if(genre === 'All'){
@@ -69,6 +70,7 @@ const SearchFilterPage = () => {
                 <button key={genre} 
                 onClick={() => handleFilter(genre)}
                 className={
+                  // CHECK activeGenre HAS VALUE TO CUSTOMIZE bg AND text-color
                   activeGenre === genre 
                   ? "px-4 cursor-pointer py-2 text-sm font-medium text-white rounded-full shadow-sm bg-blue-600 transition-colors"
                   : "px-4 cursor-pointer py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-full shadow-sm hover:bg-slate-50 transition-colors"}>

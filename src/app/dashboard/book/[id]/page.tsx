@@ -20,6 +20,7 @@ interface Book {
   image: string;
 }
 
+
 const UpdateBook = () => {
 
   const [book, setBook] = useState<Book>({
@@ -36,7 +37,7 @@ const UpdateBook = () => {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-
+  // useEffect TO FETCH DATA INTO INPUTS
   useEffect(() => {
     const fetchData = async () => {
       try{
@@ -65,7 +66,7 @@ const UpdateBook = () => {
     }
   }, [id])
 
-
+  // FUNCTION TO UPDATE DATA
   const handleUpdate = async (e: React.MouseEvent) => {
     e.preventDefault(); 
         if (!book.title?.trim() || 
